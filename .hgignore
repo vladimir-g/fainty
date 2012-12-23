@@ -1,0 +1,8 @@
+syntax: glob
+*.ropeproject
+*.orig
+*.rej
+*~
+syntax: regexp
+.*\#.*\#$
+
