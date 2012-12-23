@@ -1,5 +1,6 @@
 local awful = require("awful")
 local wibox = require("wibox")
+local naughty = require("naughty")
 local setmetatable = setmetatable
 local io = io
 local pairs = pairs
@@ -22,7 +23,10 @@ function AlsaChannel:get_data()
                        " -- sget " .. self.channel)
    if not fd then return end
    local result = fd:read("*all")
-   fd:close()
+   local retcode = fd:close()
+   if not retcode then       -- Invalid card or other error
+      return
+   end
    -- Get volume
    data.volume = result:match("(%d+)%%")
    if not data.volume then
@@ -79,6 +83,13 @@ function AlsaWidget:refresh(card_num)
    local card = self:select_card(card_num)
    local data = card.control:get_data()
    local label = ''
+   if not data then
+      self:set_markup(self.error_msg)
+      naughty.notify({ preset = naughty.config.presets.critical,
+                       title = "Error in alsa widget",
+                       text = "Error while trying to run amixer" })
+      return
+   end
    if data.mute then
       label = '<span color="' .. self.color.muted .. '">' 
          .. card.label .. '</span>'
@@ -180,6 +191,7 @@ local function new(card_list, settings)
       muted = settings.color_muted or "#F80000", -- Red
       unmuted = settings.color_unmuted or "#00EE00"  -- Green
    }
+   obj.error_msg = settings.error_msg or '<span color="#FF0004">#</span>'
    menu_theme = settings.menu_theme or { width = 120, height = 15 }
    -- Create card list
    for k, v in pairs(card_list) do
