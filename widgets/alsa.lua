@@ -142,35 +142,7 @@ function AlsaWidget:get_menu_items()
    return card_list
 end
 
--- Create widget
--- Example:
--- require('lib.volume_widget')
--- volume_wgt = lib.volume_widget(card_list, settings}
--- Initialize widget only after beautiful.init (for dropdown menu).
--- Use colume_wgt.widget when adding widget to wibox.
---
--- Arguments:
---
--- card_list - table with cards
--- Keys: 
--- label - string displayed in widget
--- cardid - card ID
--- channel - channel
--- name - string for menu
--- Example: 
--- {{label = "♪", cardid = 0, channel = "Master", name = "Speakers"},
---  {label = "☊", cardid = 1, channel = "Master", name = "Headphones"},
---  {label = "⚫", cardid = 1, channel = "Capture", name = "Microphone"}}
---
--- settings - table with widget settings (optional)
--- Keys:
--- color_muted - color for label in muted state
--- color_unmuted - color for label in unmuted state
--- refresh_timeout - update timeout
--- format - widget text format
--- Example (with default values): 
--- { color_muted = "#F80000", color_unmuted = "#00EE00",
---   refresh_timeout = 10, format = "%s% 3d%%" }
+-- Create widget. Look to widgets module readme file for more info.
 local function new(card_list, settings)
    if not card_list then
       return nil
