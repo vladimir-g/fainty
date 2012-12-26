@@ -180,17 +180,19 @@ local function new(card_list, settings)
    local card_menu = awful.menu({ items = obj:get_menu_items(),
                                   theme = menu_theme })
    -- Bind buttons
-   obj:buttons(
-      awful.util.table.join(
-         awful.button({ }, 1, function () obj:toggle() end),
-         awful.button({ }, 3, function () card_menu:toggle() end),
-         awful.button({ }, 4, function () obj:raise() end),
-         awful.button({ }, 5, function () obj:lower() end),
-         awful.button({ "Shift" }, 4, function () obj:raise(10) end),
-         awful.button({ "Shift" }, 5, function () obj:lower(10) end),
-         awful.button({ "Control" }, 4, function () obj:raise(5) end),
-         awful.button({ "Control" }, 5, function () obj:lower(5) end)
-                           ))
+   if not settings.dont_bind_buttons then
+      obj:buttons(
+         awful.util.table.join(
+            awful.button({ }, 1, function () obj:toggle() end),
+            awful.button({ }, 3, function () card_menu:toggle() end),
+            awful.button({ }, 4, function () obj:raise() end),
+            awful.button({ }, 5, function () obj:lower() end),
+            awful.button({ "Shift" }, 4, function () obj:raise(10) end),
+            awful.button({ "Shift" }, 5, function () obj:lower(10) end),
+            awful.button({ "Control" }, 4, function () obj:raise(5) end),
+            awful.button({ "Control" }, 5, function () obj:lower(5) end)
+                              ))
+   end
    -- Set update timer
    refresh_timer = timer({ timeout = settings.refresh_timeout or 10 })
    refresh_timer:connect_signal("timeout", function() obj:refresh() end)

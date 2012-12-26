@@ -37,7 +37,7 @@ Constructor looks like this::
 
 Arguments:
 
-* card_list
+* **card_list**
 
   Table of channels that shoud be controllable by this widget. Example::
 
@@ -48,33 +48,40 @@ Arguments:
 
   Each channel is also a table. Keys:
 
-  + label - icon that will be used in widget for this channel
-  + cardid - ALSA ID of card
-  + channel - name of this channel
-  + name - name of this channel in dropdown menu
+  + **label** - icon that will be used in widget for this channel
+  + **cardid** - ALSA ID of card
+  + **channel** - name of this channel
+  + **name** - name of this channel in dropdown menu
 
-* settings
+* **settings**
 
-  Table of settings. Defaults used if none provided.
+  Table of settings, optional. Defaults used if none provided.
 
   Example of table with all settings and their default values::
 
     { color_muted = "#F80000", color_unmuted = "#00EE00",
       format = "%s% 3d%%", error_msg = '<span color="#FF0004">#</span>',
-      menu_theme = { width = 120, height = 15 } }
+      menu_theme = { width = 120, height = 15 }, dont_bind_buttons = false,
+      refresh_timeout = 10 }
   
   Description:
   
-  + color_muted - color of label when channel is muted
-  + color_unmuted - same for unmuted channel
-  + format - format string for volume level in percents
-  + error_msg - widget text displayed on error
-  + menu_theme - theme parameters for dropdown menu
+  + **color_muted** - color of label when channel is muted
+  + **color_unmuted** - same for unmuted channel
+  + **format** - format string for volume level in percents
+  + **error_msg** - widget text displayed on error
+  + **menu_theme** - theme parameters for dropdown menu
+  + **dont_bind_buttons** -- don't bind buttons when widget is created
+  + **refresh_timeout** - how frequently volume level would be
+    synced. Set it to small value if you use some other
+    volume-controlling software.
 
 Available widget methods. Them work on channel that currently
 displayed in widget:
 
-* AlsaWidget:raise(num) - increase volume of selected card by num
-* AlsaWidget:lower(num) - decrease volume of selected card by num
-* AlsaWidget:toggle() - mute or unmute selected card
+* **AlsaWidget:raise(num)** - increase volume of selected card by num
+* **AlsaWidget:lower(num)** - decrease volume of selected card by num
+* **AlsaWidget:toggle()** - mute or unmute selected card
+
+You can use other methods too, look in code for more information.
 
