@@ -20,8 +20,11 @@ Widgets
 
 List of included widgets:
 
-* fainty.widgets.alsa - ALSA volume widget that can control several
+* **fainty.widgets.alsa** - ALSA volume widget that can control several
   channels of one or multiple audio cards.
+* **fainty.widgets.kbdd** - Widget that displays and controls keyboard
+  layouts with use of `kbdd <https://github.com/qnikst/kbdd/>`_.
+
 
 Installation
 ============

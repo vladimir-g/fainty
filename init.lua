@@ -4,7 +4,8 @@
 
 local fainty = {
    widgets = {
-      alsa = require("fainty.widgets.alsa")
+      alsa = require("fainty.widgets.alsa"),
+      kbdd = require("fainty.widgets.kbdd")
    }
 }
 
