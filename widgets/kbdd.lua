@@ -1,3 +1,9 @@
+----------------
+-- Kbdd widget--
+----------------
+-- Copyright (c) 2012 Vladimir Gorbunov
+-- Release under MIT license, see LICENSE file for more details
+
 local wibox = require("wibox")
 local awful = require('awful')
 local setmetatable = setmetatable

@@ -1,6 +1,8 @@
 -----------------------------------------------
 -- Fainty widgets for awesome window manager --
 -----------------------------------------------
+-- Copyright (c) 2012 Vladimir Gorbunov
+-- Release under MIT license, see LICENSE file for more details
 
 local fainty = {
    widgets = {

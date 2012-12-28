@@ -1,3 +1,9 @@
+-----------------------
+-- ALSA volume widget--
+-----------------------
+-- Copyright (c) 2012 Vladimir Gorbunov
+-- Release under MIT license, see LICENSE file for more details
+
 local awful = require("awful")
 local wibox = require("wibox")
 local naughty = require("naughty")

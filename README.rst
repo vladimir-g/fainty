@@ -42,3 +42,8 @@ Usage
 
 Look to README.rst in *widgets* directory for full documentation.
 
+License
+=======
+
+This library released under MIT license, see LICENSE for more detail.
+
