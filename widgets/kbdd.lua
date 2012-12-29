@@ -123,7 +123,7 @@ function KbddWidget:get_menu_items()
 end
 
 -- Create widget
-function new(layout_list, settings)
+local function new(layout_list, settings)
    settings = settings or {}
    local obj = wibox.widget.textbox()
    -- Put KbddWidget's methods to textbox
