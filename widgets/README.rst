@@ -149,3 +149,55 @@ Arguments:
   + **dont_bind_buttons** -- don't bind buttons when widget is created
   + **error_msg** -- text displayed on widget on error
 
+fainty.widgets.calendar
+=======================
+
+Create widget somewhere in your rc.lua. Widget is based on
+awful.widget.textclock, and you must provide textclock arguments to it::
+
+ local calendar = fainty.widgets.calendar(" %a %d %b <b>%H:%M:%S</b> ", 1)
+
+Add widget to layout like awful.widget.textclock::
+
+  right_layout:add(calendar)
+
+Customizing calendar widget
+---------------------------
+
+Constructor looks like this::
+
+  fainty.widgets.calendar(fmt, timeout, settings)
+
+First two arguments are passed to underlying textclock widget. Look
+for their description in awesome documentation.
+
+Arguments:
+
+* **fmt**
+
+  Textclock format.
+
+* **timeout**
+
+  Textclock timeout.
+
+* **settings**
+
+  Table of settings, optional. Defaults used if none provided.
+
+  Example of table with all settings and their default values::
+
+    { opts = "", day_fmt = "<u>%s</u>", highlight_day = true,
+      dont_bind_buttons = false, dont_reset_on_hover = false }
+  
+  Description:
+  
+  + **opts** - command line arguments for *cal* command. Look to *man cal*.
+  + **day_fmt** - how current day must be formatted when
+    highlighted. Must contain *%s* substring. Not needed when
+    **highlight_day** is false.
+  + **highlight_day** - highlight current day or not
+  + **dont_bind_buttons** -- don't bind buttons when widget is created
+  + **dont_reset_on_hover** - don't reset calendar to current month on hover
+
+ Look to code for more information about widget's methods.
