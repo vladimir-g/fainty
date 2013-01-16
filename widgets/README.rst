@@ -2,7 +2,8 @@
  Usage of fainty.widgets
 =========================
 
-This file contains full (maybe) documentation of fainty.widgets.
+This file contains full (maybe) documentation of fainty.widgets. Look
+in source code for default key bindings.
 
 
 fainty.widgets.alsa
