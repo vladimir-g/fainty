@@ -2,7 +2,7 @@
  Usage of fainty.widgets
 =========================
 
-This file contains (maybe) full documentation of fainty.widgets.
+This file contains full (maybe) documentation of fainty.widgets.
 
 
 fainty.widgets.alsa
@@ -200,4 +200,4 @@ Arguments:
   + **dont_bind_buttons** -- don't bind buttons when widget is created
   + **dont_reset_on_hover** - don't reset calendar to current month on hover
 
- Look to code for more information about widget's methods.
+Look to code for more information about widget's methods.
