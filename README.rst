@@ -25,7 +25,7 @@ List of included widgets:
 * **fainty.widgets.kbdd** - Widget that displays and controls keyboard
   layouts with use of `kbdd <https://github.com/qnikst/kbdd/>`_.
 * **fainty.widgets.calendar** - Textclock with simple calendar
-  tooltip. Uses *cal* command for calendar generation.
+  popup. Uses *cal* command for calendar generation.
 
 Installation
 ============

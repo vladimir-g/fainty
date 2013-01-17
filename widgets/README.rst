@@ -189,7 +189,7 @@ Arguments:
   Example of table with all settings and their default values::
 
     { opts = "", day_fmt = "<u>%s</u>", highlight_day = true,
-      dont_bind_buttons = false, dont_reset_on_hover = false }
+      dont_bind_buttons = false, dont_reset_on_show = false }
   
   Description:
   
@@ -199,6 +199,7 @@ Arguments:
     **highlight_day** is false.
   + **highlight_day** - highlight current day or not
   + **dont_bind_buttons** -- don't bind buttons when widget is created
-  + **dont_reset_on_hover** - don't reset calendar to current month on hover
+  + **dont_reset_on_show** - don't reset calendar to current month
+    when calendar pops up.
 
 Look to code for more information about widget's methods.

@@ -5,6 +5,7 @@
 -- Release under MIT license, see LICENSE file for more details
 
 local awful = require("awful")
+local wibox = require("wibox")
 local setmetatable = setmetatable
 local string = string
 local tonumber = tonumber
@@ -77,7 +78,46 @@ function CalendarWidget:update()
             "%1" .. string.format(self.settings.day_fmt, day))
       end
    end
-   self.tooltip:set_text('<span font="monospace">' .. result .. '</span>')
+   self.calendar:set_markup('<span font="monospace">' .. result .. '</span>')
+end
+
+-- Set geometry and position of calendar wibox
+function CalendarWidget:place()
+   -- Placement
+   awful.placement.under_mouse(self.wibox)
+   awful.placement.no_offscreen(self.wibox)
+   -- Geometry
+   local geom = self.wibox:geometry()
+   local n_w, n_h = self.calendar:fit(-1, -1)
+   if geom.width ~= n_w or geom.height ~= n_h then
+      self.wibox:geometry({ width = n_w, height = n_h })
+   end
+end
+
+-- Toggle calendar wibox visibility
+function CalendarWidget:toggle()
+   if self.wibox.visible == false then
+      self:show()
+   else
+      self:hide()
+   end
+end
+
+-- Show calendar wibox
+function CalendarWidget:show()
+   if self.wibox.visible then return end
+   -- Reset calendar to current month on show
+   if not self.settings.dont_reset_on_show then
+      self:reset_date()
+   end
+   self:place()
+   self.wibox.visible = true
+end
+
+-- Hide calendar wibox
+function CalendarWidget:hide()
+   if not self.wibox.visible then return end
+   self.wibox.visible = false
 end
 
 -- Create new CalendarWidget instance
@@ -88,18 +128,21 @@ local function new(fmt, timeout, settings)
    end
    obj.settings = settings or { opts = "", day_fmt = "<u>%s</u>", 
                                 highlight_day = true }
-   -- Create tooltip
-   obj.tooltip = awful.tooltip({ objects = { obj } })
-   -- Reset calendar to current month on hover
-   if not obj.settings.dont_reset_on_hover then
-      obj:connect_signal("mouse::enter", obj.reset_date)
-   end
+   -- Create textbox with calendar
+   obj.calendar = wibox.widget.textbox()
+   -- Create wibox
+   obj.wibox = wibox({})
+   obj:hide()
    obj:reset_date()             -- Set initial date
+   obj.wibox.ontop = true
+   obj.wibox:set_widget(obj.calendar)
+   obj:place()
    -- Bind buttons
    if not obj.settings.dont_bind_buttons then
       obj:buttons(
          awful.util.table.join(
-            awful.button({ }, 1, function () obj:reset_date() end),
+            awful.button({ }, 1, function () obj:toggle() end),
+            awful.button({ }, 2, function () obj:reset_date() end),
             awful.button({ }, 4, function () obj:next_month() end),
             awful.button({ }, 5, function () obj:prev_month() end)
                               ))
