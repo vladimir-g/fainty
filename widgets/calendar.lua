@@ -72,10 +72,10 @@ function CalendarWidget:update()
    if self.settings.highlight_day then
       local month, year = tonumber(os.date("%m")), tonumber(os.date("%Y"))
       if self.date.month == month and self.date.year == year then
-         local day = os.date("%d")
+         local day = os.date("%d"):match('^0?(%d+)');
          result = result:gsub(
-            "([^%d])" .. day,
-            "%1" .. string.format(self.settings.day_fmt, day))
+            "([^%d])" .. day .. "([^%d])",
+            "%1" .. string.format(self.settings.day_fmt, day) .. "%2")
       end
    end
    self.calendar:set_markup('<span font="monospace">' .. result .. '</span>')

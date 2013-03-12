@@ -197,7 +197,8 @@ Arguments:
   + **day_fmt** - how current day must be formatted when
     highlighted. Must contain *%s* substring. Not needed when
     **highlight_day** is false.
-  + **highlight_day** - highlight current day or not
+  + **highlight_day** - highlight current day or not. Doesn't really
+    work when argument "-3" is provided to cal command.
   + **dont_bind_buttons** -- don't bind buttons when widget is created
   + **dont_reset_on_show** - don't reset calendar to current month
     when calendar pops up.
