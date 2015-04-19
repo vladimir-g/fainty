@@ -7,6 +7,7 @@
 local wibox = require("wibox")
 local awful = require('awful')
 local naughty = require('naughty')
+local utils = require("fainty.utils")
 local math = math
 local setmetatable = setmetatable
 local io = io
@@ -14,22 +15,9 @@ local os = os
 local pairs = pairs
 local table = table
 
--- STRING INTERPOLATION FIXME
-function interp(s, tab)
-   return (
-      s:gsub('%%%((%a%w*)%)([-0-9%.]*[cdeEfgGiouxXsq])',
-             function(k, fmt) return tab[k] and ("%"..fmt):format(tab[k]) or
-                '%('..k..')'..fmt end))
-end
-getmetatable("").__mod = interp
-
 local Battery = { mt = {} }
 
 Battery.path = '/sys/class/power_supply/'
-
-function trim(s)
-  return (s:gsub("^%s*(.-)%s*$", "%1"))
-end                             -- FIXME
 
 function Battery:new(bat)
    local new_instance = { name = bat, 
@@ -46,7 +34,7 @@ function Battery:read(val)
    end
    data = fd:read('*all')
    fd:close()
-   return trim(data)
+   return utils.trim(data)
 end
 
 function Battery:is_present()
