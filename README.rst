@@ -2,30 +2,32 @@
  Fainty - yet another widget library for awesome WM
 ====================================================
 
-Fainty is the small and simple widget library for awesome WM. Goal of
-this project - create a small subset of configurable widgets for
-common needs. Library's widgets trying to be minimalistic and act like
-standard awesome widgets.
+Fainty is small widget library for the `Awesome WM`_. It is not very
+modular or extensible, has no external dependencies and provides
+text-based widgets that look and behave like standard awesome widgets.
 
-This library requires awesome 3.5 and lua 5.2. Lua 5.1 may work but
-not tested.
+This library requires awesome 3.5+.
+
+Warning: this is small one-man project without stable API, and beware
+of bad English.
 
 Why create another library?
 ===========================
 
-The NIH syndrome ordered me to do so.
+The NIH syndrome.
 
 Widgets
 =======
 
 List of included widgets:
 
-* **fainty.widgets.alsa** - ALSA volume widget that can control several
-  channels of one or multiple audio cards.
+* **fainty.widgets.alsa** - ALSA volume widget that can manage several
+  channels of one or multiple sound cards.
 * **fainty.widgets.kbdd** - Widget that displays and controls keyboard
-  layouts with use of `kbdd <https://github.com/qnikst/kbdd/>`_.
-* **fainty.widgets.calendar** - Textclock with simple calendar
-  popup. Uses *cal* command for calendar generation.
+  layouts with use of kbdd_.
+* **fainty.widgets.calendar** - Textclock with calendar popup.
+* **fainty.widgets.battery** - Widget with battery information.
+
 
 Installation
 ============
@@ -41,10 +43,15 @@ Add this to the top of your rc.lua::
 Usage
 =====
 
-Look to README.rst in *widgets* directory for full documentation.
+Look to documentation in doc_ subdirectory.
 
 License
 =======
 
 This library released under MIT license, see LICENSE for more detail.
+
+
+.. _Awesome WM: http://awesome.naquadah.org/
+.. _kbdd: https://github.com/qnikst/kbdd/
+.. _doc: doc/
 

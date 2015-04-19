@@ -272,7 +272,8 @@ local function new(args)
       day_fmt = args.settings.day_fmt or "<u><b>%s</b></u>",
       locale = args.settings.locale,
       other_month_color = args.settings.other_month_color or 'gray',
-      show_other_month = args.settings.show_other_month or true
+      show_other_month = args.settings.show_other_month or true,
+      bind_buttons = args.settings.bind_buttons or true
    }
    -- Get locale-specific month and day names
    obj:init_names()
@@ -286,7 +287,7 @@ local function new(args)
    obj.wibox:set_widget(obj.calendar)
    obj:place()
    -- Bind buttons
-   if not obj.settings.dont_bind_buttons then
+   if obj.settings.bind_buttons then
       obj:buttons(
          awful.util.table.join(
             awful.button({ }, 1, function () obj:toggle() end),
