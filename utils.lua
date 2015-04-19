@@ -19,3 +19,8 @@ getmetatable("").__mod = interp
 function trim(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
+
+return {
+   utils = utils,
+   trim = trim
+}
