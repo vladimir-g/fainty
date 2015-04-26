@@ -1,11 +1,12 @@
 ----------------
 -- Kbdd widget--
 ----------------
--- Copyright (c) 2012 Vladimir Gorbunov
+-- Copyright (c) 2012-2015 Vladimir Gorbunov
 -- Release under MIT license, see LICENSE file for more details
 
 local wibox = require("wibox")
 local awful = require('awful')
+local utils = require("fainty.utils")
 local setmetatable = setmetatable
 local tonumber = tonumber
 local io = io
@@ -123,17 +124,25 @@ function KbddWidget:get_menu_items()
 end
 
 -- Create widget
-local function new(layout_list, settings)
-   settings = settings or {}
+local function new(args)
+   settings = utils.merge_settings(
+      args.settings or {},
+      {
+         menu_theme = { width = 80, height = 15 },
+         error_msg = '<span color="#FF0004">[#]</span>',
+         bind_buttons = true
+      }
+   )
+   -- settings = args.settings or {}
    local obj = wibox.widget.textbox()
    -- Put KbddWidget's methods to textbox
    for k, v in pairs(KbddWidget) do
       obj[k] = v
    end
-   menu_theme = settings.menu_theme or { width = 80, height = 15 }
-   obj.error_msg = settings.error_msg or '<span color="#FF0004">[#]</span>'
+   menu_theme = settings.menu_theme
+   obj.error_msg = settings.error_msg
    obj.layouts = {}
-   for k, v in pairs(layout_list) do
+   for k, v in pairs(args.layout_list) do
       table.insert(obj.layouts, { label = v.label,
                                   index = v.index,
                                   name = v.name,
@@ -144,7 +153,7 @@ local function new(layout_list, settings)
    obj.layout_menu = awful.menu({ items = obj:get_menu_items(),
                                   theme = menu_theme })
    -- Bind buttons
-   if not settings.dont_bind_buttons then
+   if settings.bind_buttons then
       obj:buttons(
          awful.util.table.join(
             awful.button({ }, 1, function () obj:next_layout() end),

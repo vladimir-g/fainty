@@ -66,12 +66,12 @@ Arguments:
 
     {
       menu_theme = { width = 80, height = 15 },
-      dont_bind_buttons = false,
+      bind_buttons = true,
       error_msg = '<span color="#FF0004">[#]</span>'
     }
 
   Description:
   
   + **menu_theme** -- theme parameters for dropdown menu
-  + **dont_bind_buttons** -- don't bind buttons when widget is created
+  + **bind_buttons** -- bind buttons when widget is created
   + **error_msg** -- text displayed on widget on error
