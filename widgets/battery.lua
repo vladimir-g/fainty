@@ -230,27 +230,31 @@ local function new(args)
    -- TODO: Additional battery params, voltage, etc
    args.selected = args.selected or 'BAT0'
    args.settings = args.settings or {}
-   settings = {
-      fmt_discharging = args.settings.fmt_discharging or ' <span color="#F80000">↯</span>%(percent)3d% (%(hours)d:%(minutes)02d)', -- Red color
-      fmt_charging = args.settings.fmt_charging or ' <span color="#00EE00">↯</span>%(percent)3d% (%(hours)d:%(minutes)02d)', -- Green color
-      fmt_unknown = args.settings.fmt_unknown or ' <span color="#FFFFFF">↯</span>%(percent)3d%', -- White color
-      fmt_warning = args.settings.fmt_warning or ' <span color="#F80000">↯!%(percent)3d%</span>', -- Full red
-      fmt_not_present = args.settings.fmt_not_present or ' <span color="#FFFFFF">↯</span> N/A', -- White color
-      popup_fmt = args.settings.popup_fmt or 'Name: %(name)s\n' ..
-         'Status: %(status)s\n' ..
-         'Remaining: %(percent)s%\n' ..
-         'Time: %(hours)s:%(minutes)s',
-      show_popup = args.settings.show_popup or true,
-      menu_theme = args.settings.menu_theme or { width = 120, height = 15 },
-      bind_buttons = args.settings.bind_buttons or true,
-      warning_seconds = args.settings.warning_seconds or 600,
-      refresh_timeout = args.settings.refresh_timeout or 25,
-      notify_warning = args.settings.notify_warning or true,
-      notify_warning_title = args.settings.notify_warning_title or
-         'Low battery',
-      notify_warning_text = args.settings.notify_warning_text or
-         'Less than 10 minutes remaining'
-   }
+
+   settings = utils.merge_settings(
+      args.settings,
+      {
+         fmt_discharging = ' <span color="#F80000">↯</span>%(percent)3d% '
+            .. '(%(hours)d:%(minutes)02d)', -- Red color
+         fmt_charging = ' <span color="#00EE00">↯</span>%(percent)3d% ' ..
+            '(%(hours)d:%(minutes)02d)', -- Green color
+         fmt_unknown = ' <span color="#FFFFFF">↯</span>%(percent)3d%', -- White
+         fmt_warning = ' <span color="#F80000">↯!%(percent)3d%</span>', -- Red
+         fmt_not_present = ' <span color="#FFFFFF">↯</span> N/A', -- White
+         popup_fmt = 'Name: %(name)s\n' ..
+            'Status: %(status)s\n' ..
+            'Remaining: %(percent)s%\n' ..
+            'Time: %(hours)s:%(minutes)s',
+         show_popup = true,
+         menu_theme = { width = 120, height = 15 },
+         bind_buttons = true,
+         warning_seconds = 600,
+         refresh_timeout = 25,
+         notify_warning = true,
+         notify_warning_title = 'Low battery',
+         notify_warning_text = 'Less than 10 minutes remaining'
+      }
+   )
 
    local obj = wibox.widget.textbox()
    for k, v in pairs(BatteryWidget) do

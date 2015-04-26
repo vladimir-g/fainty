@@ -6,6 +6,7 @@
 
 local awful = require("awful")
 local wibox = require("wibox")
+local utils = require("fainty.utils")
 local setmetatable = setmetatable
 local string = string
 local tonumber = tonumber
@@ -267,14 +268,17 @@ local function new(args)
    end
 
    -- Set settings
-   obj.settings = {
-      week_start = args.settings.week_start or 1,
-      day_fmt = args.settings.day_fmt or "<u><b>%s</b></u>",
-      locale = args.settings.locale,
-      other_month_color = args.settings.other_month_color or 'gray',
-      show_other_month = args.settings.show_other_month or true,
-      bind_buttons = args.settings.bind_buttons or true
-   }
+   obj.settings = utils.merge_settings(
+      args.settings,
+      {
+         week_start = 1,
+         day_fmt = "<u><b>%s</b></u>",
+         locale = nil,
+         other_month_color = 'gray',
+         show_other_month = true,
+         bind_buttons = true
+      }
+   )
    -- Get locale-specific month and day names
    obj:init_names()
    -- Internal layout

@@ -4,6 +4,7 @@
 -- Copyright (c) 2015 Vladimir Gorbunov
 -- Release under MIT license, see LICENSE file for more details
 
+local pairs = pairs
 
 -- Python-like string interpolation
 -- From lua wiki: http://lua-users.org/wiki/StringInterpolation
@@ -20,7 +21,17 @@ function trim(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+-- Merge settings table with defaults. Doesn't work with subtables and
+-- modifies defaults table.
+function merge_settings(args, defaults)
+   for k,v in pairs(args) do
+      defaults[k] = v
+   end
+   return defaults
+end
+
 return {
    utils = utils,
-   trim = trim
+   trim = trim,
+   merge_settings = merge_settings
 }
