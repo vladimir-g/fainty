@@ -269,7 +269,7 @@ local function new(args)
 
    -- Set settings
    obj.settings = utils.merge_settings(
-      args.settings,
+      args.settings or {},
       {
          week_start = 1,
          day_fmt = "<u><b>%s</b></u>",

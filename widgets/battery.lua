@@ -229,10 +229,9 @@ end
 local function new(args)
    -- TODO: Additional battery params, voltage, etc
    args.selected = args.selected or 'BAT0'
-   args.settings = args.settings or {}
 
    settings = utils.merge_settings(
-      args.settings,
+      args.settings or {},
       {
          fmt_discharging = ' <span color="#F80000">↯</span>%(percent)3d% '
             .. '(%(hours)d:%(minutes)02d)', -- Red color
