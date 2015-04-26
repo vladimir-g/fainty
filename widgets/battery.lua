@@ -9,6 +9,7 @@ local awful = require('awful')
 local naughty = require('naughty')
 local utils = require("fainty.utils")
 local math = math
+local unpack = unpack
 local setmetatable = setmetatable
 local io = io
 local os = os
@@ -137,13 +138,22 @@ function BatteryWidget:refresh()
          percent = data.percent
       end
 
-      self:set_markup(fmt % {
-                         percent = percent or 0,
-                         hours = data.hours or 0,
-                         minutes = data.minutes or 0,
-                         in_seconds = data.in_seconds or 0,
-                         watt = data.watt or 0
-      })
+      local values = {
+         name = self.selected.name,
+         status = data.status,
+         percent = percent or 0,
+         hours = data.hours or 0,
+         minutes = data.minutes or 0,
+         in_seconds = data.in_seconds or 0,
+         watt = data.watt or 0
+      }
+
+      self:set_markup(fmt % values)
+      -- Update popup if needed
+      if self.settings.show_popup then
+         self.popup_box:set_markup(self.settings.popup_fmt % values)
+      end
+
    else
       self:set_markup(self.settings.fmt_not_present)
    end
@@ -165,8 +175,58 @@ function BatteryWidget:get_menu_items()
    return battery_list
 end
 
+
+-- Create battery popup
+function BatteryWidget:create_popup()
+   self.popup = wibox({})
+   self.popup.ontop = true
+   local wgt = wibox.widget.textbox()
+   local layout = wibox.layout.margin()
+   layout:set_widget(wgt)
+   layout:set_margins(5)
+   self.popup:set_widget(layout)
+   self.popup_layout = layout
+   self.popup_box = wgt
+end
+
+
+-- Set geometry and position of info popup
+function BatteryWidget:place_popup()
+   -- Placement
+   awful.placement.under_mouse(self.popup)
+   awful.placement.no_offscreen(self.popup)
+   -- Geometry
+   local geom = self.popup:geometry()
+   local n_w, n_h = self.popup_layout:fit(9999, 9999) -- An hack
+   if geom.width ~= n_w or geom.height ~= n_h then
+      self.popup:geometry({ width = n_w, height = n_h })
+   end
+end
+
+-- Toggle info popup wibox visibility
+function BatteryWidget:toggle_popup()
+   if self.popup.visible == false then
+      self:show_popup()
+   else
+      self:hide_popup()
+   end
+end
+
+-- Show info popup
+function BatteryWidget:show_popup()
+   if self.popup.visible then return end
+   self:refresh()
+   self:place_popup()
+   self.popup.visible = true
+end
+
+-- Hide info popup
+function BatteryWidget:hide_popup()
+   if not self.popup.visible then return end
+   self.popup.visible = false
+end
+
 local function new(args)
-   -- TODO: configurable popup with battery info
    -- TODO: Additional battery params, voltage, etc
    args.selected = args.selected or 'BAT0'
    args.settings = args.settings or {}
@@ -176,6 +236,11 @@ local function new(args)
       fmt_unknown = args.settings.fmt_unknown or ' <span color="#FFFFFF">↯</span>%(percent)3d%', -- White color
       fmt_warning = args.settings.fmt_warning or ' <span color="#F80000">↯!%(percent)3d%</span>', -- Full red
       fmt_not_present = args.settings.fmt_not_present or ' <span color="#FFFFFF">↯</span> N/A', -- White color
+      popup_fmt = args.settings.popup_fmt or 'Name: %(name)s\n' ..
+         'Status: %(status)s\n' ..
+         'Remaining: %(percent)s%\n' ..
+         'Time: %(hours)s:%(minutes)s',
+      show_popup = args.settings.show_popup or true,
       menu_theme = args.settings.menu_theme or { width = 120, height = 15 },
       bind_buttons = args.settings.bind_buttons or true,
       warning_seconds = args.settings.warning_seconds or 600,
@@ -212,16 +277,33 @@ local function new(args)
 
    batlist:close()
 
-   -- Add menu if there is more than one battery\
+   local btns = {}
+
+   -- Popup
+   if obj.settings.show_popup then
+      obj:create_popup()
+      if settings.bind_buttons then
+         table.insert(
+            btns,
+            awful.button({ }, 1, function () obj:toggle_popup() end)
+         )
+      end
+   end
+
+   -- Add menu if there is more than one battery
    if #obj.batteries ~= 1 then
       local battery_menu = awful.menu({ items = obj:get_menu_items(),
                                         theme = settings.menu_theme })
       if settings.bind_buttons then
-         obj:buttons(
-            awful.util.table.join(
-               awful.button({ }, 3, function () battery_menu:toggle() end)
-         ))
+         table.insert(
+            btns,
+            awful.button({ }, 3, function () battery_menu:toggle() end)
+         )
       end
+   end
+
+   if settings.bind_buttons then
+      obj:buttons(unpack(btns))
    end
 
    obj:refresh()
