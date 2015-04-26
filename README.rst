@@ -45,6 +45,11 @@ Usage
 
 Look to documentation in doc_ subdirectory.
 
+Screeenshots
+============
+
+.. image:: https://i.imgur.com/wUsybSz.png
+
 License
 =======
 
