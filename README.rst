@@ -27,6 +27,8 @@ List of included widgets:
   layouts with use of kbdd_.
 * **fainty.widgets.calendar** - Textclock with calendar popup.
 * **fainty.widgets.battery** - Widget with battery information.
+* **fainty.widgets.pulseaudio** - PulseAudio widget that can control
+  sources and sinks volume and muted state.
 
 
 Installation
