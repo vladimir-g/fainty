@@ -307,6 +307,9 @@ local function new(args)
 
    if settings.bind_buttons then
       obj:buttons(unpack(btns))
+      obj.popup:buttons(
+         awful.button({ }, 1, function () obj:toggle_popup() end)
+      )
    end
 
    obj:refresh()

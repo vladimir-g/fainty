@@ -10,7 +10,8 @@ available with use of os locale function.
 
 Default key bindings: left mouse opens calendar, scroll wheel displays
 previous/next month when calendar is opened, middle click resets
-calendar to current month (also when opened).
+calendar to current month (also when opened). Left click on calendar
+closes it.
 
 Usage
 =====

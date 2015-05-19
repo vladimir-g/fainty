@@ -298,7 +298,10 @@ local function new(args)
             awful.button({ }, 2, function () obj:reset_date() end),
             awful.button({ }, 4, function () obj:next_month() end),
             awful.button({ }, 5, function () obj:prev_month() end)
-                              ))
+      ))
+      obj.wibox:buttons(
+            awful.button({ }, 1, function () obj:toggle() end)
+      )
    end
    return obj
 end

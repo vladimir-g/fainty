@@ -4,7 +4,7 @@
 
 Battery widget display battery information (remaining time etc) and
 shows notifications when battery is low. Left click opens popup with
-more information about battery.
+more information about battery. Left click on popup closes it.
 
 Widget supports multiple batteries, but this is not really tested.
 
