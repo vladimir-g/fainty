@@ -9,6 +9,7 @@ local wibox = require("wibox")
 local naughty = require("naughty")
 local setmetatable = setmetatable
 local io = io
+local os = os
 local pairs = pairs
 local timer = timer
 local type = type
@@ -270,6 +271,8 @@ local function new(args)
       }
    end
    obj.selected = obj.channels[1]
+   -- Run pactl once to start pulse if socket activation is used
+   os.execute('pactl stat')
    obj:refresh()
 
    -- Add menu
