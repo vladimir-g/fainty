@@ -243,7 +243,7 @@ local function new(args)
          popup_fmt = 'Name: %(name)s\n' ..
             'Status: %(status)s\n' ..
             'Remaining: %(percent)s%\n' ..
-            'Time: %(hours)s:%(minutes)s',
+            'Time: %(hours)d:%(minutes)02d',
          show_popup = true,
          menu_theme = { width = 120, height = 15 },
          bind_buttons = true,
