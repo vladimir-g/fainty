@@ -29,6 +29,8 @@ List of included widgets:
 * **fainty.widgets.battery** - Widget with battery information.
 * **fainty.widgets.pulseaudio** - PulseAudio widget that can control
   sources and sinks volume and muted state.
+* **fainty.widgets.notifications** - Widget that displays
+  notifications count.
 
 
 Installation
