@@ -25,6 +25,18 @@ function NotificationsWidget:notify(args)
       args.expired_time = nil
    end
    table.insert(self.notifications, args)
+
+   -- Add callbac that will remove notification on click
+   local old_run = args.run
+   local id = #self.notifications
+   args.run = function (n)
+      table.remove(self.notifications, id)
+      if old_run then
+         old_run(n)
+      end
+      n.die()
+      self:refresh()
+   end
    self:refresh()
    return args
 end
