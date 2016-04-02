@@ -38,6 +38,7 @@ Arguments:
       return #obj.notifications ~= 0
     end,
     bind_buttons = true,
+    show_popup = true,
     refresh_timeout = 10
   }
 
@@ -49,6 +50,7 @@ Arguments:
     widget as argument (wgt.notifications - list of notifications
     where every item is table with *naughty.notify* args.
   + **bind_buttons** - bind buttons when widget is created
+  + **show_popup** - show popup with notifications list.
   + **refresh_timeout** - how frequently notifications state are
     checked. Widget tracks count of expired notifications.
 
