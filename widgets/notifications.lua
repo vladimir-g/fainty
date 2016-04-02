@@ -33,6 +33,7 @@ end
 function NotificationsWidget:clear()
    self.notifications = {}      -- Maybe just clear it?
    self:refresh()
+   self:hide_popup()
 end
 
 -- Redraw widget
@@ -114,6 +115,10 @@ local function new(args)
          awful.util.table.join(
             awful.button({ }, 1, function () obj:toggle_popup() end),
             awful.button({ }, 3, function () obj:clear() end)
+      ))
+      obj.popup:buttons(
+         awful.util.table.join(
+            awful.button({ }, 1, function () obj:hide_popup() end)
       ))
    end
    return obj
