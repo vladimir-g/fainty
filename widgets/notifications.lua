@@ -7,6 +7,7 @@
 local wibox = require("wibox")
 local awful = require('awful')
 local utils = require("fainty.utils")
+local base = require("fainty.widgets.base")
 local naughty = require("naughty")
 local setmetatable = setmetatable
 local os = os
@@ -42,7 +43,7 @@ function NotificationsWidget:refresh()
    local current_time = os.time()
    local expired = 0
    for k, v in pairs(self.notifications) do
-      if v.expired_time < current_time then
+      if v.expired_time and v.expired_time < current_time then
          expired = expired + 1
       end
    end
@@ -52,6 +53,19 @@ function NotificationsWidget:refresh()
       expired = expired,
       active = count - expired
    }
+
+   -- Update popup with list of messages
+   if settings.show_popup then
+      local text = ''
+      for k, v in pairs(self.notifications) do
+         if v.title then
+            text = text .. "<b>" .. v.title .. "</b>: "
+         end
+         text = text .. v.text .. "\n"
+      end
+      self.popup_wgt:set_markup(text)
+      self:place_popup()
+   end
 
    -- Update markup
    if self.settings.active_callback(self) then
@@ -68,6 +82,7 @@ local function new(args)
       {
          active_tpl = ' <span color="#F80000"><b>[%(count)s]</b></span> ',
          empty_tpl = '',
+         show_popup = true,
          active_callback = function (obj)
             return #obj.notifications ~= 0
          end,
@@ -75,11 +90,15 @@ local function new(args)
          refresh_timeout = 10
       }
    )
-   local obj = wibox.widget.textbox()
+   local obj = base(wibox.widget.textbox())
    obj.settings = settings
    -- Put KbddWidget's methods to textbox
    for k, v in pairs(NotificationsWidget) do
       obj[k] = v
+   end
+   -- Popup
+   if obj.settings.show_popup then
+      obj:create_popup()
    end
    obj.notifications = {}
    naughty.config.notify_callback = function (args) return obj:notify(args) end
@@ -93,7 +112,7 @@ local function new(args)
    if settings.bind_buttons then
       obj:buttons(
          awful.util.table.join(
-            awful.button({ }, 1, function () obj:clear() end),
+            awful.button({ }, 1, function () obj:toggle_popup() end),
             awful.button({ }, 3, function () obj:clear() end)
       ))
    end

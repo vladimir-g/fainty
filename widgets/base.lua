@@ -5,6 +5,8 @@
 -- Release under MIT license, see LICENSE file for more details
 
 local wibox = require("wibox")
+local awful = require('awful')
+local capi = { screen = screen, mouse = mouse }
 local pairs = pairs
 
 local BaseWidget = {
@@ -27,7 +29,7 @@ function BaseWidget:on_popup_toggle() return end
 
 -- Create popup wibox
 function BaseWidget:create_popup()
-   if not self.show_popup return end
+   if not self.show_popup then return end
    self:on_popup_create()
    self.popup = wibox({})
    self.popup.ontop = true
@@ -37,27 +39,46 @@ function BaseWidget:create_popup()
    layout:set_margins(self.popup_margin)
    self.popup:set_widget(layout)
    self.popup_layout = layout
-   self.popup_box = wgt
+   self.popup_wgt = wgt
 end
 
 -- Set geometry and position of popup
 function BaseWidget:place_popup()
-   if not self.show_popup return end
+   if not self.show_popup then return end
    self:on_popup_place()
    -- Placement
    awful.placement.under_mouse(self.popup)
    awful.placement.no_offscreen(self.popup)
+
    -- Geometry
-   local geom = self.popup:geometry()
-   local n_w, n_h = self.popup_layout:fit(9999, 9999) -- An hack
-   if geom.width ~= n_w or geom.height ~= n_h then
-      self.popup:geometry({ width = n_w, height = n_h })
-   end
+  local geom = self.popup:geometry()
+  local width = geom.width
+  local height = geom.height
+  local n_w, n_h = self.popup_layout:fit(9999, 9999) -- An hack
+  local wa = capi.screen[capi.mouse.screen].workarea
+
+  if width ~= n_w then
+     width = n_w
+  end
+  if width > wa.width then
+     width = wa.width - 20
+  end
+
+  if height ~= n_h then
+     height = n_h
+  end
+  if height > wa.height then
+     height = wa.height - 20
+  end
+
+  if width ~= geom.width or height ~= geom.height then
+     self.popup:geometry({ width = width, height = height })
+  end
 end
 
 -- Toggle info popup wibox visibility
 function BaseWidget:toggle_popup()
-   if not self.show_popup return end
+   if not self.show_popup then return end
    self:on_popup_toggle()
    if self.popup.visible == false then
       self:show_popup()
@@ -68,16 +89,16 @@ end
 
 -- Show popup
 function BaseWidget:show_popup()
-   if not self.show_popup return end
+   if not self.show_popup then return end
    if self.popup.visible then return end
-   self:on_popup_show()
    self:place_popup()
+   self:on_popup_show()
    self.popup.visible = true
 end
 
 -- Hide popup
 function BaseWidget:hide_popup()
-   if not self.show_popup return end
+   if not self.show_popup then return end
    if not self.popup.visible then return end
    self:on_popup_hide()
    self.popup.visible = false
@@ -85,11 +106,11 @@ end
 
 -- Create new base widget
 local function new(widget)
-   local wgt = widget
+   local obj = widget
    for k, v in pairs(BaseWidget) do
       obj[k] = v
    end
-   return wgt
+   return obj
 end
 
 function BaseWidget.mt:__call(...)

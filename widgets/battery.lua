@@ -8,6 +8,7 @@ local wibox = require("wibox")
 local awful = require('awful')
 local naughty = require('naughty')
 local utils = require("fainty.utils")
+local base = require("fainty.widgets.base")
 local math = math
 local unpack = unpack
 local setmetatable = setmetatable
@@ -151,7 +152,7 @@ function BatteryWidget:refresh()
       self:set_markup(fmt % values)
       -- Update popup if needed
       if self.settings.show_popup then
-         self.popup_box:set_markup(self.settings.popup_fmt % values)
+         self.popup_wgt:set_markup(self.settings.popup_fmt % values)
       end
 
    else
@@ -173,57 +174,6 @@ function BatteryWidget:get_menu_items()
       }
    end
    return battery_list
-end
-
-
--- Create battery popup
-function BatteryWidget:create_popup()
-   self.popup = wibox({})
-   self.popup.ontop = true
-   local wgt = wibox.widget.textbox()
-   local layout = wibox.layout.margin()
-   layout:set_widget(wgt)
-   layout:set_margins(5)
-   self.popup:set_widget(layout)
-   self.popup_layout = layout
-   self.popup_box = wgt
-end
-
-
--- Set geometry and position of info popup
-function BatteryWidget:place_popup()
-   -- Placement
-   awful.placement.under_mouse(self.popup)
-   awful.placement.no_offscreen(self.popup)
-   -- Geometry
-   local geom = self.popup:geometry()
-   local n_w, n_h = self.popup_layout:fit(9999, 9999) -- An hack
-   if geom.width ~= n_w or geom.height ~= n_h then
-      self.popup:geometry({ width = n_w, height = n_h })
-   end
-end
-
--- Toggle info popup wibox visibility
-function BatteryWidget:toggle_popup()
-   if self.popup.visible == false then
-      self:show_popup()
-   else
-      self:hide_popup()
-   end
-end
-
--- Show info popup
-function BatteryWidget:show_popup()
-   if self.popup.visible then return end
-   self:refresh()
-   self:place_popup()
-   self.popup.visible = true
-end
-
--- Hide info popup
-function BatteryWidget:hide_popup()
-   if not self.popup.visible then return end
-   self.popup.visible = false
 end
 
 local function new(args)
@@ -255,7 +205,9 @@ local function new(args)
       }
    )
 
-   local obj = wibox.widget.textbox()
+   local obj = base(wibox.widget.textbox())
+
+   -- local obj = wibox.widget.textbox()
    for k, v in pairs(BatteryWidget) do
       obj[k] = v
    end
