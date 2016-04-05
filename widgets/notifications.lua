@@ -26,11 +26,13 @@ function NotificationsWidget:notify(args)
    end
    table.insert(self.notifications, args)
 
-   -- Add callbac that will remove notification on click
+   -- Add callback that will remove notification on click
    local old_run = args.run
    local id = #self.notifications
    args.run = function (n)
-      table.remove(self.notifications, id)
+      if id <= #self.notifications then
+         table.remove(self.notifications, id)
+      end
       if old_run then
          old_run(n)
       end
