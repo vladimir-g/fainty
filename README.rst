@@ -6,7 +6,8 @@ Fainty is small widget library for the `Awesome WM`_. It is not very
 modular or extensible, has no external dependencies and provides
 text-based widgets that look and behave like standard awesome widgets.
 
-This library requires awesome 3.5+.
+This library requires awesome 3.5 and don't work on 4.0 at this
+time. Sorry.
 
 Warning: this is small one-man project without stable API, and beware
 of bad English.
