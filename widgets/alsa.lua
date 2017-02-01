@@ -10,7 +10,7 @@ local naughty = require("naughty")
 local setmetatable = setmetatable
 local io = io
 local pairs = pairs
-local timer = timer
+local timer = require("gears.timer")
 local type = type
 
 -- Channel object, represents one channel of sound device

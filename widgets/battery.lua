@@ -9,6 +9,7 @@ local awful = require('awful')
 local naughty = require('naughty')
 local utils = require("fainty.utils")
 local base = require("fainty.widgets.base")
+local timer = require("gears.timer")
 local math = math
 local unpack = unpack
 local setmetatable = setmetatable

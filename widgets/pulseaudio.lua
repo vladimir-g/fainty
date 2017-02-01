@@ -11,7 +11,7 @@ local setmetatable = setmetatable
 local io = io
 local os = os
 local pairs = pairs
-local timer = timer
+local timer = require("gears.timer")
 local type = type
 
 -- Object that represents sink or source
