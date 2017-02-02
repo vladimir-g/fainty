@@ -128,8 +128,8 @@ function PulseChannel:raise(value)
    if status.volume + value > self.max_volume then
       value = self.max_volume - status.volume
    end
-   awful.util.spawn("pactl set-" .. self.channel_type .. "-volume " ..
-                       self.name .. ' +' .. value .. '%')
+   awful.spawn("pactl set-" .. self.channel_type .. "-volume " ..
+                  self.name .. ' +' .. value .. '%')
 end
 
 -- Lower channel volume
@@ -139,14 +139,14 @@ function PulseChannel:lower(value)
    if status.volume - value < 0 then
       value = status.volume
    end
-   awful.util.spawn("pactl set-" .. self.channel_type .. "-volume " ..
-                       self.name .. ' -' .. value .. '%')
+   awful.spawn("pactl set-" .. self.channel_type .. "-volume " ..
+                  self.name .. ' -' .. value .. '%')
 end
 
 -- Mute or unmute channel
 function PulseChannel:toggle()
-   awful.util.spawn("pactl set-" .. self.channel_type .. "-mute " ..
-                       self.name .. " toggle")
+   awful.spawn("pactl set-" .. self.channel_type .. "-mute " ..
+                  self.name .. " toggle")
 end
 
 -- Widget class

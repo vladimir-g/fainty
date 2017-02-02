@@ -57,19 +57,21 @@ function CalendarWidget:make_textbox(contents)
    local wgt_box = wibox.widget.textbox()
    wgt_box:set_markup(contents)
    wgt_box:set_align('right')
-   local wgt = wibox.widget.base.make_widget(wgt_box)
+   -- local wgt = wibox.widget.base.make_widget(wgt_box)
 
-   local layout = wibox.layout.margin()
-   layout:set_widget(wgt)
-   layout:set_margins(2)        -- FIXME
+   local container = wibox.container.margin()
+   container:set_widget(wgt_box)
+   -- container:set_margins(2)        -- FIXME
 
    local width, height = nil, nil
+
    -- Get widget size on first run
    if not self.max_box_width or not self.max_box_height then
-      width, height = wgt:fit(-1, -1)
+      -- width, height = wgt:fit(-1, -1)
+      width, height = wgt_box:get_preferred_size()
    end
 
-   return layout, width, height
+   return container, width, height
 end
 
 -- Update tooltip with new calendar
@@ -87,6 +89,7 @@ function CalendarWidget:update()
       os.date('%d', os.time{year=self.date.year,
                             month=self.date.month, day=0})
    )
+   self.rows = 0
 
    -- Current month
    -- self.monthtable[self.date.month])
@@ -118,6 +121,7 @@ function CalendarWidget:update()
       insert_box(row, box, w, h)
    end
    self.calendar:add(row)
+   self.rows = self.rows + 1
 
    local count = 0
    local first_offset = (month_start.wday - week_start - 1) % 7
@@ -150,6 +154,7 @@ function CalendarWidget:update()
       count = count + 1
       if count % 7 == 0 then
          self.calendar:add(row)
+         self.rows = self.rows + 1
          row = wibox.layout.fixed.horizontal()
       end
    end
@@ -168,9 +173,11 @@ function CalendarWidget:update()
          insert_box(row, box, w, h)
       end
       self.calendar:add(row)
+      self.rows = self.rows + 1
    end
 
    self:set_box_sizes(boxes, widths, heights)
+   self:resize()
 end
 
 -- Set calendar cell sizes to maximum size of cell
@@ -179,14 +186,14 @@ function CalendarWidget:set_box_sizes(boxes, widths, heights)
    if not max_width then
       table.sort(widths)        -- Not so optimal sorting method, FIXME
       max_width = widths[#widths]
-      self.max_box_width = max_width
+      self.max_box_width = max_width + 4
    end
 
    local max_height = self.max_box_height
    if not max_height then
       table.sort(heights)
       max_height = heights[#heights]
-      self.max_box_height = max_height
+      self.max_box_height = max_height + 4
    end
 
    for i, box in ipairs(boxes) do
@@ -201,12 +208,17 @@ function CalendarWidget:place()
    -- Placement
    awful.placement.under_mouse(self.wibox)
    awful.placement.no_offscreen(self.wibox)
-   -- Geometry
-   local geom = self.wibox:geometry()
-   local n_w, n_h = self.calendar:fit(9999, 9999) -- An hack
-   -- if geom.width ~= n_w or geom.height ~= n_h then
-      self.wibox:geometry({ width = n_w, height = n_h })
-   -- end
+   self:resize()
+end
+
+-- Resize box to fit content
+function CalendarWidget:resize()
+   self.wibox:geometry({
+         -- Number of days in week and 4 px for margin
+         width = self.max_box_width * 7 + 4,
+         -- Number of weeks plus header row
+         height = self.max_box_height * (self.rows + 1)
+   })
 end
 
 -- Toggle calendar wibox visibility
@@ -262,7 +274,7 @@ end
 
 -- Create new CalendarWidget instance
 local function new(args)
-   local obj = awful.widget.textclock(args.fmt, args.timeout)
+   local obj = wibox.widget.textclock(args.fmt, args.timeout)
    for k, v in pairs(CalendarWidget) do
       obj[k] = v
    end

@@ -34,11 +34,11 @@ function BaseWidget:create_popup()
    self.popup = wibox({})
    self.popup.ontop = true
    local wgt = self:get_popup_widget()
-   local layout = wibox.layout.margin()
-   layout:set_widget(wgt)
-   layout:set_margins(self.popup_margin)
-   self.popup:set_widget(layout)
-   self.popup_layout = layout
+   local container = wibox.container.margin()
+   container:set_widget(wgt)
+   container:set_margins(self.popup_margin)
+   self.popup:set_widget(container)
+   self.popup_layout = container
    self.popup_wgt = wgt
 end
 
@@ -51,29 +51,33 @@ function BaseWidget:place_popup()
    awful.placement.no_offscreen(self.popup)
 
    -- Geometry
-  local geom = self.popup:geometry()
-  local width = geom.width
-  local height = geom.height
-  local n_w, n_h = self.popup_layout:fit(9999, 9999) -- An hack
-  local wa = capi.screen[capi.mouse.screen].workarea
+   local geom = self.popup:geometry()
+   local width = geom.width
+   local height = geom.height
+   local n_w, n_h = self.popup_wgt:get_preferred_size()
+   n_w = n_w + self.popup_margin * 2
+   n_h = n_h + self.popup_margin * 2
 
-  if width ~= n_w then
-     width = n_w
-  end
-  if width > wa.width then
-     width = wa.width - 20
-  end
+   local wa = capi.screen[capi.mouse.screen].workarea
+   if width ~= n_w then
+      width = n_w
+   end
+   if width > wa.width then
+      width = wa.width - 20
+   end
 
-  if height ~= n_h then
-     height = n_h
-  end
-  if height > wa.height then
-     height = wa.height - 20
-  end
+   if height ~= n_h then
+      height = n_h
+   end
+   if height > wa.height then
+      height = wa.height - 20
+   end
 
-  if width ~= geom.width or height ~= geom.height then
-     self.popup:geometry({ width = width, height = height })
-  end
+   if width ~= geom.width or height ~= geom.height then
+      if width ~= 0 and height ~= 0 then
+         self.popup:geometry({ width = width, height = height })
+      end
+   end
 end
 
 -- Toggle info popup wibox visibility
