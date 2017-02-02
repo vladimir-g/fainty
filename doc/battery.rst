@@ -16,7 +16,7 @@ Usage
 
 Create widget somewhere in the top of your rc.lua::
 
-  calendar = fainty.widgets.battery({
+  battery = fainty.widgets.battery({
       selected = "BAT0"
   })
 
