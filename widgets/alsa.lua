@@ -52,17 +52,17 @@ end
 -- Raise card volume
 function AlsaChannel:raise(value)
    value = value or 1
-   awful.spawn_with_shell("amixer -q -c " .. self.cardid ..
-                             " -- sset " .. self.channel
-                             .. " " .. value .. "+", false)
+   awful.spawn("amixer -q -c " .. self.cardid ..
+                  " -- sset " .. self.channel
+                  .. " " .. value .. "+", false)
 end
 
 -- Lower card volume
 function AlsaChannel:lower(value)
    value = value or 1
-   awful.spawn_with_shell("amixer -q -c " .. self.cardid ..
-                             " -- sset " .. self.channel
-                             .. " " .. value .. "-", false)
+   awful.spawn("amixer -q -c " .. self.cardid ..
+                  " -- sset " .. self.channel
+                  .. " " .. value .. "-", false)
 end
 
 -- Mute or unmute card
