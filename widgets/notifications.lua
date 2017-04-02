@@ -84,7 +84,9 @@ function NotificationsWidget:refresh()
    end
 
    -- Update markup
-   if self.settings.active_callback(self) then
+   if naughty.is_suspended() then
+      self:set_markup(self.settings.suspended_tpl % values)
+   elseif self.settings.active_callback(self) then
       self:set_markup(self.settings.active_tpl % values)
    else
       self:set_markup(self.settings.empty_tpl % values)
@@ -97,7 +99,8 @@ local function new(args)
       args.settings or {},
       {
          active_tpl = ' <span color="#F80000"><b>[%(count)s]</b></span> ',
-         empty_tpl = '',
+         suspended_tpl = ' <span color="#7D79A9"><b>[%(count)s]</b></span> ',
+         empty_tpl = ' <span><b>[%(count)s]</b></span> ',
          show_popup = true,
          active_callback = function (obj)
             return #obj.notifications ~= 0
@@ -129,6 +132,10 @@ local function new(args)
       obj:buttons(
          awful.util.table.join(
             awful.button({ }, 1, function () obj:toggle_popup() end),
+            awful.button({ }, 2, function ()
+                  naughty.toggle()
+                  obj:refresh()
+            end),
             awful.button({ }, 3, function () obj:clear() end)
       ))
       obj.popup:buttons(

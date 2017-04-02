@@ -33,7 +33,8 @@ Arguments:
 
   {
     active_tpl = ' <span color="#F80000"><b>[%(count)s]</b></span> ',
-    empty_tpl = '',
+    suspended_tpl = ' <span color="#7D79A9"><b>[%(count)s]</b></span> ',
+    empty_tpl = ' <span><b>[%(count)s]</b></span> ',
     active_callback = function (obj)
       return #obj.notifications ~= 0
     end,
@@ -45,17 +46,24 @@ Arguments:
   Description:
 
   + **active_tpl** - text when widget is in *active* state.
-  + **empty_tpl** - text when widget is in *empty* state
+  + **empty_tpl** - text when *naughty* is suspended.
+  + **empty_tpl** - text when widget is in *empty* state.
   + **active_callback** - function to check widget state. Receives
     widget as argument (wgt.notifications - list of notifications
-    where every item is table with *naughty.notify* args.
+    where every item is table with *naughty.notify* args. May be used
+    when only expired notifications count matters or something else.
   + **bind_buttons** - bind buttons when widget is created
   + **show_popup** - show popup with notifications list.
   + **refresh_timeout** - how frequently notifications state are
     checked. Widget tracks count of expired notifications.
 
-  Available values for format in **active_tpl** and **empty_tpl**:
+  Available values for format in **active_tpl**, **suspended_tpl** and
+  **empty_tpl**:
 
   + **count** - count of notifications.
   + **active** - count of non-expired notifications.
   + **expired** - count of expired notifications.
+
+Binded buttons by default: left mouse shows popup with all
+notifications texts, right button clears notifications, middle button
+toggles *naughty* suspend state.
