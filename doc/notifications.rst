@@ -46,7 +46,7 @@ Arguments:
   Description:
 
   + **active_tpl** - text when widget is in *active* state.
-  + **empty_tpl** - text when *naughty* is suspended.
+  + **suspended_tpl** - text when *naughty* is suspended.
   + **empty_tpl** - text when widget is in *empty* state.
   + **active_callback** - function to check widget state. Receives
     widget as argument (wgt.notifications - list of notifications
