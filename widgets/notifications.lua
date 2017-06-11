@@ -80,7 +80,6 @@ function NotificationsWidget:refresh()
          text = text .. v.text .. "\n"
       end
       self.popup_wgt:set_markup(text)
-      self:place_popup()
    end
 
    -- Update markup
@@ -91,6 +90,11 @@ function NotificationsWidget:refresh()
    else
       self:set_markup(self.settings.empty_tpl % values)
    end
+end
+
+-- Don't toggle popup when there is no notifications
+function NotificationsWidget:on_popup_show()
+   return #self.notifications > 0
 end
 
 -- Create widget
