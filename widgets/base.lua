@@ -21,11 +21,11 @@ function BaseWidget:get_popup_widget()
 end
 
 -- Default callbacks
-function BaseWidget:on_popup_create() return end
-function BaseWidget:on_popup_place() return end
-function BaseWidget:on_popup_show() return end
-function BaseWidget:on_popup_hide() return end
-function BaseWidget:on_popup_toggle() return end
+function BaseWidget:on_popup_create() return true end
+function BaseWidget:on_popup_place() return true end
+function BaseWidget:on_popup_show() return true end
+function BaseWidget:on_popup_hide() return true end
+function BaseWidget:on_popup_toggle() return true end
 
 -- Create popup wibox
 function BaseWidget:create_popup()
@@ -83,7 +83,7 @@ end
 -- Toggle info popup wibox visibility
 function BaseWidget:toggle_popup()
    if not self.show_popup then return end
-   self:on_popup_toggle()
+   if not self:on_popup_toggle() then return end
    if self.popup.visible == false then
       self:show_popup()
    else
@@ -95,8 +95,8 @@ end
 function BaseWidget:show_popup()
    if not self.show_popup then return end
    if self.popup.visible then return end
+   if not self:on_popup_show() then return end
    self:place_popup()
-   self:on_popup_show()
    self.popup.visible = true
 end
 
@@ -104,7 +104,7 @@ end
 function BaseWidget:hide_popup()
    if not self.show_popup then return end
    if not self.popup.visible then return end
-   self:on_popup_hide()
+   if not self:on_popup_hide() then return end
    self.popup.visible = false
 end
 
