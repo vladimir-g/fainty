@@ -26,6 +26,8 @@ List of included widgets:
   channels of one or multiple sound cards.
 * **fainty.widgets.kbdd** - Widget that displays and controls keyboard
   layouts with use of kbdd_.
+* **fainty.widgets.awpwkb** - Widget for awpwkb_ per-window keyboard
+  layout switcher.
 * **fainty.widgets.calendar** - Textclock with calendar popup.
 * **fainty.widgets.battery** - Widget with battery information.
 * **fainty.widgets.pulseaudio** - PulseAudio widget that can control
@@ -63,5 +65,6 @@ This library released under MIT license, see LICENSE for more detail.
 
 .. _Awesome WM: https://awesomewm.org/
 .. _kbdd: https://github.com/qnikst/kbdd/
+.. _awpwkb: https://github.com/vladimir-g/awpwkb/
 .. _doc: doc/
 
