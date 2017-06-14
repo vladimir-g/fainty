@@ -71,7 +71,7 @@ function NotificationsWidget:refresh()
    }
 
    -- Update popup with list of messages
-   if settings.show_popup then
+   if self.settings.show_popup then
       local text = ''
       for k, v in pairs(self.notifications) do
          if v.title then
