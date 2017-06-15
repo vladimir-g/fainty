@@ -40,6 +40,7 @@ Arguments:
     end,
     bind_buttons = true,
     show_popup = true,
+    show_expired = true,
     refresh_timeout = 10
   }
 
@@ -54,6 +55,7 @@ Arguments:
     when only expired notifications count matters or something else.
   + **bind_buttons** - bind buttons when widget is created
   + **show_popup** - show popup with notifications list.
+  + **show_expired** - show text of expired notifications in popup.
   + **refresh_timeout** - how frequently notifications state are
     checked. Widget tracks count of expired notifications.
 

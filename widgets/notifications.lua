@@ -61,6 +61,7 @@ function NotificationsWidget:refresh()
    for k, v in pairs(self.notifications) do
       if v.expired_time and v.expired_time < current_time then
          expired = expired + 1
+         v.expired = true
       end
    end
 
@@ -74,10 +75,12 @@ function NotificationsWidget:refresh()
    if self.settings.show_popup then
       local text = ''
       for k, v in pairs(self.notifications) do
-         if v.title then
-            text = text .. "<b>" .. v.title .. "</b>: "
+         if self.settings.show_expired or not v.expired then
+            if v.title then
+               text = text .. "<b>" .. v.title .. "</b>: "
+            end
+            text = text .. v.text .. "\n"
          end
-         text = text .. v.text .. "\n"
       end
       self.popup_wgt:set_markup(text)
    end
@@ -94,7 +97,18 @@ end
 
 -- Don't toggle popup when there is no notifications
 function NotificationsWidget:on_popup_show()
-   return #self.notifications > 0
+   active = 0
+   expired = 0
+   for _, v in pairs(self.notifications) do
+      if v.expired then
+         if self.settings.show_expired then
+            expired = expired + 1
+         end
+      else
+         active = active + 1
+      end
+   end
+   return (active + expired) > 0
 end
 
 -- Create widget
@@ -106,6 +120,7 @@ local function new(args)
          suspended_tpl = ' <span color="#7D79A9"><b>[%(count)s]</b></span> ',
          empty_tpl = ' <span><b>[%(count)s]</b></span> ',
          show_popup = true,
+         show_expired = true,
          active_callback = function (obj)
             return #obj.notifications ~= 0
          end,
