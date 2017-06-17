@@ -46,9 +46,6 @@ end
 function BaseWidget:place_popup()
    if not self.show_popup then return end
    self:on_popup_place()
-   -- Placement
-   awful.placement.under_mouse(self.popup)
-   awful.placement.no_offscreen(self.popup)
 
    -- Geometry
    local geom = self.popup:geometry()
@@ -78,6 +75,10 @@ function BaseWidget:place_popup()
          self.popup:geometry({ width = width, height = height })
       end
    end
+
+   -- Placement
+   awful.placement.under_mouse(self.popup)
+   awful.placement.no_offscreen(self.popup)
 end
 
 -- Toggle info popup wibox visibility
