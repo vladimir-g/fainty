@@ -256,7 +256,10 @@ local function new(args)
       unmuted = args.settings.color_unmuted or "#00EE00"  -- Green
    }
    obj.error_msg = args.settings.error_msg or '<span color="#FF0004">#</span>'
-   obj.notify_errors = args.settings.notify_errors or true
+   obj.notify_errors = true
+   if args.settings.notify_errors == false then
+      obj.notify_errors = false
+   end
    menu_theme = args.settings.menu_theme or { width = 120, height = 15 }
    obj.step = args.settings.step or 1
    -- Create channels list
