@@ -9,7 +9,7 @@ local awful = require('awful')
 local naughty = require('naughty')
 local utils = require("fainty.utils")
 local base = require("fainty.widgets.base")
-local timer = require("gears.timer")
+local gears = require("gears")
 local math = math
 local unpack = unpack
 local setmetatable = setmetatable
@@ -19,6 +19,7 @@ local pairs = pairs
 local table = table
 
 local Battery = { mt = {} }
+
 
 Battery.path = '/sys/class/power_supply/'
 
@@ -239,7 +240,7 @@ local function new(args)
    if obj.settings.show_popup then
       obj:create_popup()
       if settings.bind_buttons then
-         table.insert(
+         btns = gears.table.join(
             btns,
             awful.button({ }, 1, function () obj:toggle_popup() end)
          )
@@ -251,7 +252,7 @@ local function new(args)
       local battery_menu = awful.menu({ items = obj:get_menu_items(),
                                         theme = settings.menu_theme })
       if settings.bind_buttons then
-         table.insert(
+         btns = gears.table.join(
             btns,
             awful.button({ }, 3, function () battery_menu:toggle() end)
          )
@@ -259,7 +260,7 @@ local function new(args)
    end
 
    if settings.bind_buttons then
-      obj:buttons(unpack(btns))
+      obj:buttons(btns)
       obj.popup:buttons(
          awful.button({ }, 1, function () obj:toggle_popup() end)
       )
@@ -269,7 +270,7 @@ local function new(args)
 
    -- Set update timer
    if #obj.batteries ~= 0 then
-      refresh_timer = timer({ timeout = settings.refresh_timeout })
+      refresh_timer = gears.timer({ timeout = settings.refresh_timeout })
       refresh_timer:connect_signal("timeout", function() obj:refresh() end)
       refresh_timer:start()
    end
