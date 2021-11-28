@@ -1,18 +1,17 @@
 -----------------------------
 -- PulseAudio volume widget--
 -----------------------------
--- Copyright (c) 2015 Vladimir Gorbunov
+-- Copyright (c) 2015-2021 Vladimir Gorbunov
 -- Release under MIT license, see LICENSE file for more details
 
 local awful = require("awful")
 local wibox = require("wibox")
 local naughty = require("naughty")
 local setmetatable = setmetatable
-local io = io
-local os = os
 local pairs = pairs
 local timer = require("gears.timer")
 local type = type
+local string = string
 
 -- Object that represents sink or source
 local PulseChannel = {}
@@ -22,131 +21,79 @@ function PulseChannel:new(channel_type, name, max_volume)
    local new_instance = {
       channel_type = channel_type,
       name = name,
-      max_volume = max_volume
+      max_volume = max_volume,
+      volume = 0,
+      muted = false,
+      has_error = false
    }
    setmetatable(new_instance, { __index = PulseChannel })
    return new_instance
 end
 
 -- Get channel volume and muted state
-function PulseChannel:get_data()
-   -- TODO maybe move to separate object
+function PulseChannel:update(callback)
+   -- Combine both commands for one async run
+   local cmd = 'LC_ALL=C pactl get-' .. self.channel_type .. '-volume ' .. self.name .. ' '
+      .. '&& LC_ALL=C pactl get-' .. self.channel_type .. '-mute ' .. self.name
+   local func = function (stdout)
+      local got_volume = false
+      local got_mute = false
+      for line in stdout:gmatch("[^\n]+") do
+         line:gsub('Mute:%s+(%w+)', function (status)
+                      self.muted = (status == 'yes')
+                      got_mute = true
+         end)
+         line:gsub('Volume:[^/]+/%s+(%d+)%%%s+/', function (volume)
+                      self.volume = tonumber(volume)
+                      got_volume = true
+         end)
+      end
+      if not got_volume or not got_mute then
+         self.has_error = true
+      else
+         self.has_error = false
+      end
 
-   -- Read data
-   local fd = io.popen('pacmd list-' .. self.channel_type .. 's')
-   if not fd then return end
-   local result = fd:read("*all")
-   local retcode = fd:close()
-
-   if not retcode then       -- Invalid channel or other error
-      return
-   end
-
-   -- Parse data
-   local data = {}
-   local current_index = nil
-   for line in result:gmatch("[^\n]+") do
-      -- Index
-      line:gsub('index: (%d)', function (index)
-                   current_index = tonumber(index)
-                   data[current_index] = { index = index }
-      end)
-
-      -- Volume
-      line:gsub('^%s+volume:[^/]+/%s+(%d+)%%', function (volume)
-                   data[current_index].volume = tonumber(volume)
-      end)
-
-      -- Name
-      line:gsub('^%s+name:%s+<([^>]+)', function (name)
-                   data[current_index].name = name
-      end)
-
-      -- Muted status
-      line:gsub('muted:%s+(%w+)', function (status)
-                   if status == 'no' then
-                      data[current_index].muted = false
-                   else
-                      data[current_index].muted = true
-                   end
-      end)
-
-   end
-
-   -- Find channel
-   items = {}
-   for k, v in pairs(data) do
-      if v.name == self.name then
-         return v
+      -- Execute callback when volume and muted are updated
+      if callback then
+         callback()
       end
    end
-
+   awful.spawn.easy_async_with_shell(cmd, func)
 end
 
 -- Get dafault sink or source data
 function PulseChannel.get_default(channel_type)
-   local fd = io.popen('pacmd list-' .. channel_type .. 's')
-   if not fd then return end
-   local result = fd:read("*all")
-   local retcode = fd:close()
-
-   if not retcode then
-      return
-   end
-
-   -- Parse data
-   local data = {}
-   local in_default = false;
-   for line in result:gmatch("[^\n]+") do
-      -- Index
-      line:gsub('* index: (%d)', function (index)
-                   in_default = true
-                   data.index = index
-      end)
-
-      -- Volume
-      line:gsub('^%s+volume:[^/]+/%s+(%d+)%%', function (volume)
-                   if in_default then
-                      data.volume = tonumber(volume)
-                   end
-      end)
-
-      -- Name
-      line:gsub('^%s+name:%s+<([^>]+)', function (name)
-                   if in_default then
-                      data.name = name
-                   end
-      end)
-   end
-   return data
+   return '@DEFAULT_' .. string.upper(channel_type) .. '@'
 end
 
 -- Raise channel volume
 function PulseChannel:raise(value)
    value = value or 1
-   local status = self:get_data()
-   if status.volume + value > self.max_volume then
-      value = self.max_volume - status.volume
+   if self.volume + value > self.max_volume then
+      value = self.max_volume - self.volume
    end
    awful.spawn("pactl set-" .. self.channel_type .. "-volume " ..
-                  self.name .. ' +' .. value .. '%')
+               self.name .. ' +' .. value .. '%')
+   self.volume = self.volume + value
 end
 
 -- Lower channel volume
 function PulseChannel:lower(value)
    value = value or 1
-   local status = self:get_data()
-   if status.volume - value < 0 then
-      value = status.volume
+   if self.volume - value < 0 then
+      value = self.volume
    end
    awful.spawn("pactl set-" .. self.channel_type .. "-volume " ..
-                  self.name .. ' -' .. value .. '%')
+               self.name .. ' -' .. value .. '%')
+   self.volume = self.volume - value
 end
 
 -- Mute or unmute channel
 function PulseChannel:toggle()
    awful.spawn("pactl set-" .. self.channel_type .. "-mute " ..
-                  self.name .. " toggle")
+               self.name .. " toggle")
+   self.muted = not self.muted
 end
 
 -- Widget class
@@ -163,27 +110,34 @@ function PulseAudioWidget:select_channel(channel_num)
 end
 
 -- Refresh channel state
+function PulseAudioWidget:update(channel_num)
+   local channel = self:select_channel(channel_num)
+   channel.control:update(function ()
+         self:refresh()
+   end)
+end
+
+-- Refresh channel state
 function PulseAudioWidget:refresh(channel_num)
    local channel = self:select_channel(channel_num)
-   local data = channel.control:get_data()
    local label = ''
-   if not data then
+   if channel.control.has_error then
       self:set_markup(self.error_msg)
       if self.notify_errors then
          naughty.notify({ preset = naughty.config.presets.critical,
                           title = "Error in pulseaudio widget",
-                          text = "Error while trying to run pacmd" })
+                          text = "Error while trying to run pactl" })
       end
       return
    end
-   if data.muted then
+   if channel.control.muted then
       label = '<span color="' .. self.color.muted .. '">'
          .. channel.icon .. '</span>'
    else
       label = '<span color="' .. self.color.unmuted .. '">'
          .. channel.icon .. '</span>'
    end
-   self:set_markup(self.format:format(label, data.volume))
+   self:set_markup(self.format:format(label, channel.control.volume))
 end
 
 -- Raise volume
@@ -219,10 +173,10 @@ function PulseAudioWidget:get_menu_items()
    local channel_list = {}
    for k, v in pairs(self.channels) do
       channel_list[k] = { v.icon .. " " .. v.label,
-                       function ()
-                          self.selected = self.channels[k]
-                          self:refresh()
-                       end }
+                          function ()
+                             self.selected = self.channels[k]
+                             self:update()
+      end }
    end
    return channel_list
 end
@@ -244,7 +198,7 @@ local function new(args)
       -- Set default channel from default sink
       local default = PulseChannel.get_default('sink')
       args.channel_list = {
-         {icon = "♪", channel_type = 'sink', name = default.name, label = 'Default'}
+         {icon = "♪", channel_type = 'sink', name = default, label = 'Default'}
       }
    end
 
@@ -275,8 +229,7 @@ local function new(args)
    end
    obj.selected = obj.channels[1]
    -- Run pactl once to start pulse if socket activation is used
-   os.execute('pactl stat')
-   obj:refresh()
+   awful.spawn.easy_async('pactl stat', function() obj:update() end)
 
    -- Add menu
    local channel_menu
@@ -306,7 +259,7 @@ local function new(args)
 
    -- Init update timer
    refresh_timer = timer({ timeout = args.settings.refresh_timeout or 10 })
-   refresh_timer:connect_signal("timeout", function() obj:refresh() end)
+   refresh_timer:connect_signal("timeout", function() obj:update() end)
    refresh_timer:start()
    return obj
 end

@@ -6,10 +6,11 @@ PulseAudio widget displays volume and state (muted/unmuted) for sink
 or source (called *channel* in code). Default key bindings allow to
 raise/lower volume with scroll wheel and mute output with left
 click. Right click opens dropdown menu with list of defined outputs,
-allowing to select and control different channel.
+allowing selection and controling different channels.
 
-Requires **pacmd**, **pactl** and pulseaudio server of course. Consult
-PulseAudio documentation for more about sinks and sources.
+Requires **pactl** and working pulseaudio-compatible server of
+course. Consult PulseAudio documentation for more about sinks and
+sources.
 
 Usage
 =====
@@ -50,7 +51,7 @@ Arguments:
 
 * **channel_list**
 
-  Optional table of channels that shoud be managed by this
+  Optional table of channels that should be managed by this
   widget. If not provided, default sink will be used.
 
   Example::
@@ -66,7 +67,8 @@ Arguments:
 
   + **icon** - symbol that will be used in widget for this channel.
   + **channel_type** - 'sink' or 'source'.
-  + **name** - internal PulseAudio name (obtained with pacmd).
+  + **name** - internal PulseAudio name (obtained with pactl). Index
+    can be used too because **pactl** allows it.
   + **label** - name for popup menu.
   + **max_volume** - maximum volume value in percents (default: 100).
 
