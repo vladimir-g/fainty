@@ -229,7 +229,14 @@ local function new(args)
    end
    obj.selected = obj.channels[1]
    -- Run pactl once to start pulse if socket activation is used
-   awful.spawn.easy_async('pactl stat', function() obj:update() end)
+   awful.spawn.easy_async('pactl info', function(out)
+                             -- Pipewire actually has internal async
+                             -- device load so completed pactl doesn't
+                             -- mean that devices really here. Timeout
+                             -- tries to solve possible single error
+                             -- print on first load in that case.
+                             timer.start_new(2, function () obj:update() end)
+   end)
 
    -- Add menu
    local channel_menu
